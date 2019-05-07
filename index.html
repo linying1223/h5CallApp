@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <select name="" id="bankList"></select>
+  <input type="button" value="打开银行app" id="btn" onclick="openApp()">
+  <script type="text/javascript">
+
+    var ua = navigator.userAgent;
+    var isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1; //g
+    var isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) //ios终端
+    var timer = null
+
+    let urlSchemeList=[
+      {
+        "bank":"工商银行",
+        "scheme":"com.icbc.iphoneclient",
+        "package": "com.icbc"
+      },
+      {
+        "bank":"农业银行",
+        "scheme":"bankabc",
+        "package": "com.android.bankabc"
+      },
+      {
+        "bank":"中国银行",
+        "scheme":"bocmbcizf",
+        "package": "com.chinamworld.bocmbci"
+      },
+      {
+        "bank":"建设银行",
+        "scheme":"ccbmobilebank",
+        "package": "com.chinamworld.main"
+      },
+      {
+        "bank":"交通银行",
+        "scheme":"wx862767be0919d45a",
+        "package": "com.bankcomm.Bankcomm"
+      },
+      {
+        "bank":"民生银行",
+        "scheme":"com.cmbc.cn.iphone",
+        "package": "cn.com.cmbc.newmbank"
+      },
+      {
+        "bank":"中信银行",
+        "scheme":"citic",
+        "package": "com.ecitic.bank.mobile"
+      },
+      {
+        "bank":"浦发银行",
+        "scheme":"wx1cb534bb13ba3dbd",
+        "package": "cn.com.spdb.mobilebank.per"
+      },
+      {
+        "bank":"兴业银行",
+        "scheme":"cibmb",
+        "package": "com.cib.cibmb"
+      },
+      {
+        "bank":"招商银行",
+        "scheme":"cmbmobilebank",
+        "package": "cmb.pb"
+      },
+      {
+        "bank":"广发银行",
+        "scheme":"wb801126555",
+        "package": "com.cgbchina.xpt"
+      },
+      {
+        "bank":"光大银行",
+        "scheme":"wxf505f9da589b9506",
+        "package": "com.cebbank.mobile.cemb"
+      },
+      {
+        "bank":"华夏银行",
+        "scheme":"com.hx.hxbank",
+        "package": "com.rytong.app.bankhx"
+      },
+      {
+        "bank":"渤海银行",
+        "scheme":"wxcc0b1c78c5bebdb5",
+        "package": "cn.com.bhbc.mobilebank.per"
+      },
+      {
+        "bank":"天津银行",
+        "scheme":"wx1683cc7279171014",
+        "package": "com.csii.tianjin.mobilebank"
+      },
+      {
+        "bank":"恒丰银行",
+        "scheme":"egbank",
+        "package": "com.rytong.egfbank"
+      },
+      {
+        "bank":"浙商银行",
+        "scheme":"wx105bde8d0d9f2372",
+        "package": "com.czbank.mbank"
+      },
+      {
+        "bank":"平安银行",
+        "scheme":"paebqw",
+        "package": "com.pingan.paces.ccms"
+      },
+      {
+        "bank":"江苏银行",
+        "scheme":"jsbsjyh",
+        "package": "cn.jsb.china"
+      },
+      {
+        "bank":"北京银行",
+        "scheme":"wxb57101c34cb7773e",
+        "package": "com.rytong.bankbj"
+      },
+      {
+        "bank":"上海银行",
+        "scheme":"bankofshanghai",
+        "package": "cn.com.shbank.mper"
+      },
+      {
+        "bank":"河北银行",
+        "scheme":"hebbank",
+        "package": "com.rytong.bankbhb"
+      },
+      {
+        "bank":"青岛银行",
+        "scheme":"wxe63b95c397856088",
+        "package": "com.rytong.bankqd"
+      },
+      {
+        "bank":"齐鲁银行",
+        "scheme":"wx66b04eb340cefc57",
+        "package": "com.iss.qilubank"
+      },
+      {
+        "bank":"日照银行",
+        "scheme":"sccba810",
+        "package": "com.iss.rizhaobank"
+      },
+      {
+        "bank":"莱商银行",
+        "scheme":"sccba803",
+        "package": "com.iss.laishangbank"
+      },
+      {
+        "bank":"潍坊银行",
+        "scheme":"wx4df61036a188951c",
+        "package": "com.iss.weifangbank"
+      },
+      {
+        "bank":"济宁银行",
+        "scheme":"wx46071b807d2f473c",
+        "package": "com.iss.jiningbank"
+      },
+      {
+        "bank":"东营银行",
+        "scheme":"wb4216759672",
+        "package": "com.iss.dongyingbank"
+      },
+      {
+        "bank":"烟台银行",
+        "scheme":"sccba816",
+        "package": "com.iss.yantaibank"
+      },
+      {
+        "bank":"威海银行",
+        "scheme":"wx14cd9621b76ffa2f",
+        "package": "com.pafinancialtech.weihaibank"
+      },
+      {
+        "bank":"枣庄银行",
+        "scheme":"sccba808",
+        "package": "com.iss.zaozhuangbank"
+      },
+      {
+        "bank":"泰安银行",
+        "scheme":"wb3819898473",
+        "package": "com.iss.taianbank"
+      },
+      {
+        "bank":"邮政储蓄银行",
+        "scheme":"psbcmbank",
+        "package": "com.yitong.mbank.psbc"
+      },
+      {
+        "bank":"杭州银行",
+        "scheme":"com.hzbank.hzbank.per",
+        "package": "cn.com.hzb.mobilebank.per"
+      }
+    ];
+    var selectNode = document.getElementById('bankList')
+    for(var i = 0; i < urlSchemeList.length; i++){
+      var option = document.createElement('option')
+      option.setAttribute('value', urlSchemeList[i].bank)
+      option.innerHTML = urlSchemeList[i].bank
+      selectNode.appendChild(option)
+    }
+  
+    document.onload = function() {
+      // 当跳到app后取消定时器
+      document.addEventListener('visibilitychange webkitvisibilitychange', function() {
+        var tag = document.hidden || document.webkitHidden;
+        if (tag) {
+          clearTimeout(timer);
+        }
+      }, false)
+
+      window.addEventListener('pagehide', function() {
+        clearTimeout(timer);
+      }, false)
+    }
+
+    // 判断是否是微信浏览器
+    function isWeixinBrowser() {
+      return (/micromessenger/.test(ua)) ? true : false;
+    }
+
+    function isQQBrowser() {
+      return (ua.match(/QQ/i) == "qq") ? true : false;
+    }
+
+    // 打开app
+    function openApp() {
+      if (isWeixinBrowser() || isQQBrowser()) {
+        alert('友好的提示')
+      } else {
+        var selectObj = document.getElementById('bankList');
+        var index = selectObj.selectedIndex;
+        var value = selectObj.options[index].value;
+        var scheme = ''
+        var packageName = ''
+        // 寻找需要打开的app
+        var isExistBank = urlSchemeList.filter(item => value.indexOf(item.bank) > -1)
+        if (isExistBank.length > 0) {
+          scheme = isExistBank[0].scheme
+          packageName = isExistBank[0].package
+        } else {
+          alert('未找到该app')
+        }
+        // android
+        if (isAndroid) {
+          window.location.href = `intent://#Intent;scheme=${scheme};package=${packageName};S.browser_fallback_url=//a.app.qq.com/o/simple.jsp?pkgname=${packageName};end`
+        } else { //ios
+          window.location.href = `${scheme}://`;
+          timer = setTimeout(function(){window.location.href = 'itms-apps://itunes.apple.com'},3000);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
